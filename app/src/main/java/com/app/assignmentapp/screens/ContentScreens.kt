@@ -1,4 +1,4 @@
-package com.app.assignmentapp
+package com.app.assignmentapp.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

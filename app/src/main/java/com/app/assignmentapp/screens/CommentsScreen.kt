@@ -1,4 +1,4 @@
-package com.app.assignmentapp
+package com.app.assignmentapp.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.app.assignmentapp.R
 import com.app.assignmentapp.ui.theme.AssignmentAppTheme
 import com.app.assignmentapp.ui.theme.Blue
 import com.app.assignmentapp.ui.theme.Blue40
@@ -149,7 +150,7 @@ fun Post() {
             val iconSize = 18.dp
             val textSize: TextUnit = 13.sp
             Text(
-                text = "167 Comments",
+                text = "12 Comments",
                 fontSize = textSize,
                 color = Color.Black,
                 modifier = Modifier
@@ -167,7 +168,7 @@ fun Post() {
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.sort_icon),
-                    contentDescription = "Localized description",
+                    contentDescription = "",
                     tint = Blue,
                     modifier = Modifier.height(iconSize)
                 )
