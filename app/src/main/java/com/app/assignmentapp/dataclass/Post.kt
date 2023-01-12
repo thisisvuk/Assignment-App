@@ -1,4 +1,4 @@
-package com.app.assignmentapp
+package com.app.assignmentapp.dataclass
 
 data class Post(
     val id: Int,

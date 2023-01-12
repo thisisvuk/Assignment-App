@@ -1,6 +1,9 @@
 package com.app.assignmentapp
 
 import androidx.compose.runtime.Composable
+import com.app.assignmentapp.screens.BazaarScreen
+import com.app.assignmentapp.screens.Feeds
+import com.app.assignmentapp.screens.ProfileScreen
 
 typealias ComposableFun = @Composable () -> Unit
 

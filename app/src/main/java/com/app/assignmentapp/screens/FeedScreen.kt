@@ -1,6 +1,6 @@
 @file:Suppress("OPT_IN_IS_NOT_ENABLED")
 
-package com.app.assignmentapp
+package com.app.assignmentapp.screens
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
@@ -8,8 +8,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -26,7 +24,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.app.assignmentapp.R
+import com.app.assignmentapp.TabItem
+import com.app.assignmentapp.dataclass.Post
+import com.app.assignmentapp.pagination.MainViewModel
 import com.app.assignmentapp.ui.theme.Blue
 import com.app.assignmentapp.ui.theme.Blue40
 import com.google.accompanist.pager.*
@@ -98,51 +101,33 @@ fun TabContent(tabs: List<TabItem>, pagerState: PagerState) {
     }
 }
 
-
-val posts = listOf(
-    Post(
-        33,
-        "Ayush Agarwal",
-        R.drawable.profile,
-        "SOIL AWARENESS",
-        1,
-        "Do organic farming and save soil from harmful chemicals.",
-        arrayListOf(R.drawable.image1),
-        10,
-        12
-    ), Post(
-        22,
-        "Vaibhav Kakde",
-        R.drawable.profile2,
-        "MARKETING",
-        2,
-        "Increase in demand of Organic Basmati Rice",
-        arrayListOf(R.drawable.photo1, R.drawable.image5),
-        50,
-        8
-    ),
-    Post(
-        11,
-        "Ayush Agarwal",
-        R.drawable.profile,
-        "QUESTION",
-        3,
-        "Is organic farming a future of modern agriculture?",
-        arrayListOf(R.drawable.image3, R.drawable.image2, R.drawable.image4),
-        25,
-        12
-    )
-)
-
 @Composable
 fun Feeds(navController: NavHostController? = navCController) {
 
-    val state = LazyListState()
-    LazyColumn(state = state) {
-        items(posts) { post ->
+    val viewModel = viewModel<MainViewModel>()
+    val state = viewModel.state
+    LazyColumn {
+        items(state.items.size) { i ->
+            if (i >= state.items.size - 1 && !state.endReached && !state.isLoading) {
+                viewModel.loadNextItems()
+            }
+
+            val post = state.items[i]
             PostCard(
                 post, navController
             )
+        }
+        item {
+            if (state.isLoading) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
         }
     }
 }
@@ -170,7 +155,8 @@ fun PostCard(post: Post, navController: NavHostController? = navCController) {
                     .clip(CircleShape)
             )
             Column(
-                modifier = Modifier.padding(start = 10.dp), horizontalAlignment = Alignment.Start
+                modifier = Modifier.padding(start = 10.dp),
+                horizontalAlignment = Alignment.Start
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically
@@ -195,7 +181,19 @@ fun PostCard(post: Post, navController: NavHostController? = navCController) {
                     text = "${post.time} hours ago", fontSize = 12.sp, color = Gray
                 )
             }
-
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.End,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                androidx.compose.material3.Icon(
+                    painter = painterResource(id = R.drawable.ic_more_horizontal),
+                    contentDescription = "",
+                    tint = Gray,
+                    modifier = Modifier
+                        .height(20.dp)
+                )
+            }
         }
 
         Text(
@@ -276,7 +274,7 @@ fun PostCard(post: Post, navController: NavHostController? = navCController) {
             }
         }
         Divider(
-            color = Gray, thickness = 1.dp, modifier = Modifier.padding(
+            color = Gray, thickness = 0.5.dp, modifier = Modifier.padding(
                 top = 12.dp
             )
         )
