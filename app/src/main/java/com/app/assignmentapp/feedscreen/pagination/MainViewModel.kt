@@ -1,12 +1,13 @@
-package com.app.assignmentapp.pagination
+package com.app.assignmentapp.feedscreen.pagination
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.app.assignmentapp.dataclass.Post
-import com.app.assignmentapp.repository.Repository
+import com.app.assignmentapp.feedscreen.data.Post
+import com.app.assignmentapp.feedscreen.data.Repository
 import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
@@ -21,7 +22,7 @@ class MainViewModel : ViewModel() {
             state = state.copy(isLoading = it)
         },
         onRequest = { nextPage ->
-            repository.getItems(nextPage, 20)
+            repository.getItems(nextPage, 10)
         },
         getNextKey = {
             state.page + 1
@@ -43,6 +44,7 @@ class MainViewModel : ViewModel() {
     }
 
     fun loadNextItems() {
+        Log.d("**************","Called")
         viewModelScope.launch {
             paginator.loadNextItems()
         }

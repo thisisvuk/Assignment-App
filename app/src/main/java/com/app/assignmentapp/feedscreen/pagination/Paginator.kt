@@ -1,4 +1,4 @@
-package com.app.assignmentapp.pagination
+package com.app.assignmentapp.feedscreen.pagination
 
 interface Paginator<Key, Post> {
     suspend fun loadNextItems()

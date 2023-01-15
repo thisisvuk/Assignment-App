@@ -1,7 +1,6 @@
-package com.app.assignmentapp.repository
+package com.app.assignmentapp.feedscreen.data
 
 import com.app.assignmentapp.R
-import com.app.assignmentapp.dataclass.Post
 
 class Repository {
     private val dataSource = (1..100).map {
@@ -12,7 +11,7 @@ class Repository {
             "SOIL AWARENESS",
             1,
             "Do organic farming and save soil from harmful chemicals.",
-            arrayListOf(R.drawable.image1),
+            arrayListOf(R.drawable.photo1, R.drawable.photo1, R.drawable.photo1),
             10,
             12
         )

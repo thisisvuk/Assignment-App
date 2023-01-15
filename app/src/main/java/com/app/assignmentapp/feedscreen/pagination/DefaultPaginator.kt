@@ -1,4 +1,4 @@
-package com.app.assignmentapp.pagination
+package com.app.assignmentapp.feedscreen.pagination
 
 class DefaultPaginator<Key, Post>(
     private val initialKey: Key,

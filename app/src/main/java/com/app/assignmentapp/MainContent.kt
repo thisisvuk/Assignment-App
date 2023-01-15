@@ -10,8 +10,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.app.assignmentapp.screens.CommentsScreen
-import com.app.assignmentapp.screens.FeedScreen
+import com.app.assignmentapp.commentscreen.presentation.CommentsScreen
+import com.app.assignmentapp.feedscreen.presentation.FeedScreen
 
 @Composable
 fun MainContent() {

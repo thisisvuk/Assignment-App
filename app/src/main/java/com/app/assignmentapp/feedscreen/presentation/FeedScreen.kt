@@ -1,6 +1,6 @@
 @file:Suppress("OPT_IN_IS_NOT_ENABLED")
 
-package com.app.assignmentapp.screens
+package com.app.assignmentapp.feedscreen.presentation
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,18 +21,18 @@ import androidx.compose.ui.graphics.Color.Companion.Gray
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.app.assignmentapp.R
 import com.app.assignmentapp.TabItem
-import com.app.assignmentapp.dataclass.Post
-import com.app.assignmentapp.pagination.MainViewModel
+import com.app.assignmentapp.feedscreen.data.Post
+import com.app.assignmentapp.feedscreen.pagination.MainViewModel
+import com.app.assignmentapp.ui.dimensions
 import com.app.assignmentapp.ui.theme.Blue
 import com.app.assignmentapp.ui.theme.Blue40
+import com.app.assignmentapp.ui.theme.type
 import com.google.accompanist.pager.*
 import kotlinx.coroutines.launch
 
@@ -49,14 +50,12 @@ fun FeedScreen(navController: NavHostController? = null) {
     val list = listOf(TabItem.Charcha, TabItem.Bazaar, TabItem.Profile)
     val pagerState = rememberPagerState(initialPage = 0)
 
-
     Column(modifier = Modifier.fillMaxSize()) {
         Tabs(tabs = list, pagerState = pagerState)
         TabContent(tabs = list, pagerState = pagerState)
     }
 
 }
-
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -73,7 +72,7 @@ fun Tabs(tabs: List<TabItem>, pagerState: PagerState) {
         tabs.forEachIndexed { index, tabItem ->
 
             Tab(
-                text = { Text(tabItem.title) },
+                text = { Text(text = tabItem.title, style = MaterialTheme.type.headlineMedium) },
                 selected = pagerState.currentPage == index,
                 onClick = {
                     scope.launch {
@@ -91,30 +90,31 @@ fun Tabs(tabs: List<TabItem>, pagerState: PagerState) {
 
 }
 
-
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun TabContent(tabs: List<TabItem>, pagerState: PagerState) {
     HorizontalPager(count = tabs.size, state = pagerState) { page ->
         tabs[page].screen()
-
     }
 }
 
 @Composable
 fun Feeds(navController: NavHostController? = navCController) {
-
     val viewModel = viewModel<MainViewModel>()
     val state = viewModel.state
+    val scope = rememberCoroutineScope()
     LazyColumn {
         items(state.items.size) { i ->
             if (i >= state.items.size - 1 && !state.endReached && !state.isLoading) {
-                viewModel.loadNextItems()
+                LaunchedEffect(key1 = state) {
+                    viewModel.loadNextItems()
+                    scope.launch {
+                    }
+                }
             }
-
             val post = state.items[i]
             PostCard(
-                post, navController
+                post = post, navController = navController
             )
         }
         item {
@@ -122,7 +122,7 @@ fun Feeds(navController: NavHostController? = navCController) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp),
+                        .padding(MaterialTheme.dimensions.small),
                     horizontalArrangement = Arrangement.Center
                 ) {
                     CircularProgressIndicator()
@@ -138,24 +138,24 @@ fun PostCard(post: Post, navController: NavHostController? = navCController) {
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(vertical = 12.dp)
+            .padding(vertical = MaterialTheme.dimensions.medium)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .padding(horizontal = 12.dp)
+                .padding(horizontal = MaterialTheme.dimensions.medium)
         ) {
             Image(
                 painter = painterResource(id = post.profile),
                 contentDescription = "",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .size(40.dp)
+                    .size(MaterialTheme.dimensions.profile)
                     .clip(CircleShape)
             )
             Column(
-                modifier = Modifier.padding(start = 10.dp),
+                modifier = Modifier.padding(start = MaterialTheme.dimensions.medium),
                 horizontalAlignment = Alignment.Start
             ) {
                 Row(
@@ -164,21 +164,23 @@ fun PostCard(post: Post, navController: NavHostController? = navCController) {
                 ) {
                     Text(
                         text = post.name,
-                        fontSize = 14.sp,
+                        style = MaterialTheme.type.headlineSmall,
                         color = Black,
-                        modifier = Modifier.padding(end = 10.dp)
+                        modifier = Modifier.padding(end = MaterialTheme.dimensions.medium)
                     )
                     Box(modifier = Modifier.background(color = Blue40)) {
                         Text(
                             text = post.type,
-                            fontSize = 10.sp,
+                            style = MaterialTheme.type.bodySmall,
                             color = Blue,
-                            modifier = Modifier.padding(3.dp)
+                            modifier = Modifier.padding(MaterialTheme.dimensions.extraSmall)
                         )
                     }
                 }
                 Text(
-                    text = "${post.time} hours ago", fontSize = 12.sp, color = Gray
+                    text = "${post.time} hours ago",
+                    style = MaterialTheme.type.bodyMedium,
+                    color = Gray
                 )
             }
             Row(
@@ -191,23 +193,27 @@ fun PostCard(post: Post, navController: NavHostController? = navCController) {
                     contentDescription = "",
                     tint = Gray,
                     modifier = Modifier
-                        .height(20.dp)
+                        .height(MaterialTheme.dimensions.extraLarge)
                 )
             }
         }
 
         Text(
             text = post.text,
-            fontSize = 14.sp,
+            style = MaterialTheme.type.bodyLarge,
             color = Black,
-            modifier = Modifier.padding(12.dp, 15.dp, 12.dp)
+            modifier = Modifier.padding(
+                start = MaterialTheme.dimensions.medium,
+                top = MaterialTheme.dimensions.large,
+                end = MaterialTheme.dimensions.medium
+            )
         )
 
         ImageSlide(post.image)
 
+
         Row {
-            val iconSize = 18.dp
-            val iconLableSize: TextUnit = 12.sp
+            val iconSize = MaterialTheme.dimensions.large
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
@@ -224,9 +230,9 @@ fun PostCard(post: Post, navController: NavHostController? = navCController) {
                 )
                 Text(
                     text = "${post.likes} Likes",
-                    fontSize = iconLableSize,
+                    style = MaterialTheme.type.bodyMedium,
                     color = Black,
-                    modifier = Modifier.padding(start = 10.dp)
+                    modifier = Modifier.padding(start = MaterialTheme.dimensions.medium)
                 )
             }
             Row(verticalAlignment = Alignment.CenterVertically,
@@ -246,9 +252,9 @@ fun PostCard(post: Post, navController: NavHostController? = navCController) {
                 )
                 Text(
                     text = "${post.comments} Comments",
-                    fontSize = iconLableSize,
+                    style = MaterialTheme.type.bodyMedium,
                     color = Black,
-                    modifier = Modifier.padding(start = 10.dp)
+                    modifier = Modifier.padding(start = MaterialTheme.dimensions.medium)
                 )
             }
             Row(
@@ -267,15 +273,15 @@ fun PostCard(post: Post, navController: NavHostController? = navCController) {
                 )
                 Text(
                     text = "Share",
-                    fontSize = iconLableSize,
+                    style = MaterialTheme.type.bodyMedium,
                     color = Black,
-                    modifier = Modifier.padding(start = 10.dp)
+                    modifier = Modifier.padding(start = MaterialTheme.dimensions.medium)
                 )
             }
         }
         Divider(
-            color = Gray, thickness = 0.5.dp, modifier = Modifier.padding(
-                top = 12.dp
+            color = Gray, thickness = MaterialTheme.dimensions.divider, modifier = Modifier.padding(
+                top = MaterialTheme.dimensions.medium
             )
         )
     }
@@ -289,7 +295,7 @@ private fun ImageSlide(image: ArrayList<Int>) {
             .fillMaxWidth()
             .wrapContentHeight()
             .aspectRatio(1f)
-            .padding(vertical = 10.dp)
+            .padding(vertical = MaterialTheme.dimensions.medium)
     ) { padding ->
         Column(
             Modifier
@@ -322,13 +328,16 @@ private fun ImageSlide(image: ArrayList<Int>) {
                 pagerState = pagerState,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
-                    .padding(horizontal = 10.dp, vertical = 10.dp),
+                    .padding(
+                        horizontal = MaterialTheme.dimensions.medium,
+                        vertical = MaterialTheme.dimensions.medium
+                    )
             )
         }
     }
 }
 
-@Preview(showBackground = true)
+@Preview(name = "NEXUS_7", device = Devices.PIXEL_XL)
 @Composable
 fun DefaultPreview() {
     Surface(Modifier.fillMaxSize()) {
