@@ -5,6 +5,7 @@ import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -14,11 +15,9 @@ import com.app.assignmentapp.commentscreen.presentation.CommentsScreen
 import com.app.assignmentapp.feedscreen.presentation.FeedScreen
 
 @Composable
-fun MainContent() {
+fun MainContent(navController: NavHostController) {
 
     Surface(modifier = Modifier.fillMaxSize()) {
-        val navController = rememberNavController()
-
         NavHost(navController = navController, startDestination = "feed") {
             composable("feed") {
                 FeedScreen(navController)
@@ -33,10 +32,4 @@ fun MainContent() {
 
     }
 
-}
-
-@Preview
-@Composable
-fun MainPreview() {
-    MainContent()
 }

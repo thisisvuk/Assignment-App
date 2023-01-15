@@ -37,14 +37,14 @@ import com.google.accompanist.pager.*
 import kotlinx.coroutines.launch
 
 @SuppressLint("StaticFieldLeak")
-lateinit var navCController: NavHostController
+lateinit var navController: NavHostController
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun FeedScreen(navController: NavHostController? = null) {
 
     if (navController != null) {
-        navCController = navController
+        com.app.assignmentapp.feedscreen.presentation.navController = navController
     }
 
     val list = listOf(TabItem.Charcha, TabItem.Bazaar, TabItem.Profile)
@@ -99,7 +99,7 @@ fun TabContent(tabs: List<TabItem>, pagerState: PagerState) {
 }
 
 @Composable
-fun Feeds(navController: NavHostController? = navCController) {
+fun Feeds() {
     val viewModel = viewModel<MainViewModel>()
     val state = viewModel.state
     val scope = rememberCoroutineScope()
@@ -114,7 +114,7 @@ fun Feeds(navController: NavHostController? = navCController) {
             }
             val post = state.items[i]
             PostCard(
-                post = post, navController = navController
+                post = post
             )
         }
         item {
@@ -133,7 +133,7 @@ fun Feeds(navController: NavHostController? = navCController) {
 }
 
 @Composable
-fun PostCard(post: Post, navController: NavHostController? = navCController) {
+fun PostCard(post: Post) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -242,7 +242,7 @@ fun PostCard(post: Post, navController: NavHostController? = navCController) {
                     .wrapContentHeight()
                     .weight(1f)
                     .clickable {
-                        navController?.navigate("comments/${post.id}")
+                        navController.navigate("comments/${post.id}")
                     }) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_comment_outline),
@@ -341,6 +341,6 @@ private fun ImageSlide(image: ArrayList<Int>) {
 @Composable
 fun DefaultPreview() {
     Surface(Modifier.fillMaxSize()) {
-        Feeds(null)
+        Feeds()
     }
 }
