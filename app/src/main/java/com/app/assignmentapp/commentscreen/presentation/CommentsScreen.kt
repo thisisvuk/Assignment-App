@@ -117,7 +117,7 @@ fun Post() {
 
                 ) {
                     androidx.compose.material.Text(
-                        text = "\"Ayush Agarwal",
+                        text = "Ayush Agarwal",
                         style = MaterialTheme.type.headlineSmall,
                         color = Color.Black,
                         modifier = Modifier.padding(end = MaterialTheme.dimensions.medium)
